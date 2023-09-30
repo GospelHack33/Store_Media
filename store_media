@@ -1,0 +1,99 @@
+#!/bin/python3
+# store_media is an automated tool that serves your files to the inserted usb stick.
+# it scans the download folder to find any downloaded file and move it into your usb stick automatically
+# author - gospel chukwunonso
+import os
+import shutil
+from colorama import Fore
+import time
+from threading import Thread
+import threading
+
+# clear term
+os.system('clear')
+
+# check if the system supports usb
+def check_usb():
+    if os.path.exists('/media/') == True:
+       pass
+    else:
+       print(Fore.RED+"\n[!] This Machine Does't Support USBs\n"+Fore.WHITE)
+       exit(1)
+    
+    
+check_usb()  
+
+# get usb path and name 
+# check if a usb stick drive is inserted, else raise an error!!!
+usb_path = f'/media/{os.environ.get("USER")}'
+drive = os.listdir(usb_path)
+if len(drive) == 1:
+   pass
+else:
+     print(Fore.RED+"\n[!] No USB Drive Is Plugged In"+Fore.WHITE)
+     print(Fore.RED+"\n[!] Only 1 USB Drive Is Accepted, Unplug Any Other Drive To Continue\n"+Fore.WHITE)
+     exit(1)
+
+# ... 
+print(Fore.BLUE+f"\n[+] Usb Drive -",Fore.GREEN+f"{drive[0]}\n"+Fore.WHITE)
+usb_path =  f'/media/{os.environ.get("USER")}/{drive[0]}'
+
+# start moving files on the download directory to the inserted usb stick
+print(Fore.YELLOW+"[*] Store_Media Running...\n"+Fore.WHITE)
+
+files = [] # append all files here
+
+def store_media():
+    download_path = f'/home/{os.environ.get("USER")}/Downloads'
+    if os.path.exists(download_path) == True:
+       pass
+    else:
+       print(Fore.RED+"[!] User Downloads Directory Not Found\n"+Fore.WHITE)
+       exit(1)
+      
+      
+
+store_media()
+status = 'not moved'
+
+download_path = f'/home/{os.environ.get("USER")}/Downloads'
+
+def store_media_start():
+    for f in os.listdir(download_path):
+        # move following extensions - txt, png, jpeg, jpg, log
+        if '.txt' in f or '.png' in f or '.jpeg' in f or '.jpg' in f or '.log' in f:
+           if f not in files:
+              files.append(f)
+           
+           else:
+              pass
+    for app in files:
+        #print(Fore.GREEN+f"[+] Moving {app} To Drive\n"+Fore.WHITE) 
+        if app not in usb_path:
+           try:
+               shutil.move(download_path+'/'+app, usb_path)
+           except PermissionError:
+               print(Fore.GREEN+"[!] Drive Disconnected\n"+Fore.WHITE)
+               exit(1)
+           except shutil.Error:
+               pass
+           except FileNotFoundError:
+               pass
+           
+        else:
+           pass
+          
+
+try:
+    while True:    
+          store_media_start()
+except KeyboardInterrupt:
+    print(Fore.YELLOW+"Exiting Store_Media"+Fore.WHITE)
+    exit(0)
+
+
+
+
+
+    
+
